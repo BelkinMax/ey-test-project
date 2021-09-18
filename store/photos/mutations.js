@@ -4,12 +4,6 @@ const SET_LOADING = (state, payload) => {
   state.isLoading = payload;
 };
 
-const SET_META = (state, payload) => {
-  const { count } = payload;
-
-  state.meta.count = count;
-};
-
 const SET_PARAMS = (state, payload) => {
   const { start, limit } = payload;
 
@@ -33,7 +27,6 @@ const REMOVE_PHOTO = (state, payload) => {
 export default {
   SET_LOADING,
   SET_PHOTOS,
-  SET_META,
   SET_PARAMS,
   REMOVE_PHOTO
 };

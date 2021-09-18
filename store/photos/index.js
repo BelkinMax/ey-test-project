@@ -7,12 +7,12 @@ const state = () => {
     photos: [],
 
     meta: {
-      count: 0
+      COUNT: 5000
     },
 
     params: {
       _start: 0,
-      _limit: 1
+      _limit: 12
     },
 
     isLoading: false
