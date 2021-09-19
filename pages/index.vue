@@ -1,18 +1,14 @@
 <template>
   <v-container fluid>
-    <v-row ref="itemsWrapper" justify="center" class="pa-3">
-      <v-col
+    <transition-group ref="itemsWrapper" class="row pa-3 items-row" name="list">
+      <div
         v-for="photo in photos"
         :key="photo.id"
-        cols="6"
-        sm="4"
-        md="3"
-        lg="2"
-        class="square-cell"
+        class="col-6 col-sm-4 col-md-3 col-lg-2 square-cell"
       >
-        <PhotoCard :photo="photo" @remove="removeCard(photo.id)" />
-      </v-col>
-    </v-row>
+        <PhotoCard :photo="photo" @remove="removeCard" />
+      </div>
+    </transition-group>
 
     <v-row ref="loader" justify="center" class="pa-3 mb-6">
       <v-col ref="loadingSpinner" cols="12" class="text-center">
@@ -30,8 +26,9 @@ export default {
   data() {
     return {
       isFetchMorePhotos: false,
-      fullChunkParams: { _limit: 12 },
-      onePhotoParams: { _limit: 1 }
+      TRIGGER_OFFSET: 200,
+      FULL_CHUNK_PARAMS: { _limit: 12 },
+      ONE_PHOTO_PARAMS: { _limit: 1 }
     };
   },
 
@@ -47,22 +44,31 @@ export default {
   watch: {
     isFetchMorePhotos: {
       handler: function(val) {
-        if (val && !this.photosIsLoading) {
+        if (
+          val &&
+          !this.photosIsLoading &&
+          this.photosMeta["photos_left"] > 0
+        ) {
           // 5. Watch "isFetchMorePhotos" to be "true"
           //    and fetch 12 more photos
-          this.fetchMorePhotos(this.fullChunkParams);
+          this.fetchMorePhotos(this.FULL_CHUNK_PARAMS);
         }
       }
     }
   },
 
   computed: {
-    ...mapGetters("photos", ["photos", "photosIsLoading", "photosParams"])
+    ...mapGetters("photos", [
+      "photos",
+      "photosIsLoading",
+      "photosParams",
+      "photosMeta"
+    ])
   },
 
   methods: {
-    ...mapActions("photos", ["fetchPhotos"]),
-    ...mapMutations("photos", ["SET_PARAMS"]),
+    ...mapActions("photos", ["fetchPhotos", "removePhoto"]),
+    ...mapMutations("photos", ["SET_PARAMS", "REMOVE_PHOTO"]),
 
     async fetchMorePhotos(params) {
       this.SET_PARAMS(params);
@@ -85,20 +91,37 @@ export default {
       this.$nextTick(() => {
         this.isFetchMorePhotos = isInViewport({
           element: this.$refs.loader,
-          offsetTop: 200
+          offsetTop: this.TRIGGER_OFFSET
         });
       });
     },
 
-    removeCard(id) {
-      // TODO: Remove photo
+    async removeCard(id) {
+      // Remove 1 photo and fetch 1 back
+      this.REMOVE_PHOTO({ id });
+      await this.fetchMorePhotos(this.ONE_PHOTO_PARAMS);
     }
   }
 };
 </script>
 
 <style lang="scss" scoped>
-.square-cell {
-  aspect-ratio: 1;
+.items-row {
+  width: 100%;
+
+  .square-cell {
+    aspect-ratio: 1;
+  }
+}
+
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.3s;
+}
+
+.list-enter,
+.list-leave-to {
+  opacity: 0;
+  transform: scale(0.9);
 }
 </style>
