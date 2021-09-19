@@ -5,7 +5,7 @@ export default {
    ** Nuxt rendering mode
    ** See https://nuxtjs.org/api/configuration-mode
    */
-  mode: "spa",
+  ssr: false,
   /*
    ** Nuxt target
    ** See https://nuxtjs.org/api/configuration-target
@@ -65,6 +65,10 @@ export default {
    */
   vuetify: {
     customVariables: ["~/assets/variables.scss"],
+    treeShake: true,
+    options: {
+      customProperties: true
+    },
     theme: {
       dark: false,
       themes: {

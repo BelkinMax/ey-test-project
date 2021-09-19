@@ -1,4 +1,4 @@
-import { Photo } from "@/models/Photo";
+import Photo from "@/models/Photo";
 
 const SET_LOADING = (state, payload) => {
   state.isLoading = payload;
