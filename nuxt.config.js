@@ -30,6 +30,13 @@ export default {
     link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" }]
   },
   /*
+   ** Env
+   */
+  env: {
+    JSON_PLACEHOLDER_BASE:
+      process.env.JSON_PLACEHOLDER_BASE || "http://localhost:3000"
+  },
+  /*
    ** Global CSS
    */
   css: [],
