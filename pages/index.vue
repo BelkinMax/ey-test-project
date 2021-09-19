@@ -2,8 +2,8 @@
   <v-container fluid>
     <v-row ref="itemsWrapper" justify="center" class="pa-3">
       <v-col
-        v-for="(photo, idx) in photos"
-        :key="idx"
+        v-for="photo in photos"
+        :key="photo.id"
         cols="6"
         sm="4"
         md="3"
@@ -23,133 +23,67 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex";
+import { mapActions, mapGetters, mapMutations } from "vuex";
 import { isInViewport } from "@/helpers/Utils";
-import { concat } from "lodash";
 
 export default {
   data() {
     return {
-      fetchMorePhotos: false,
-      photos: []
+      isFetchMorePhotos: false,
+      fullChunkParams: { _limit: 12 },
+      onePhotoParams: { _limit: 1 }
     };
   },
+
   mounted() {
-    this.checkLoaderInViewport();
+    // 1. Set listeners on scroll and resize events
     window.addEventListener("scroll", this.checkLoaderInViewport);
     window.addEventListener("resize", this.checkLoaderInViewport);
+
+    // 2. Check if ref "loader" is in the viewport
+    this.checkLoaderInViewport();
   },
+
   watch: {
-    fetchMorePhotos: {
+    isFetchMorePhotos: {
       handler: function(val) {
-        if (val) {
-          this.fetchPhotos();
+        if (val && !this.photosIsLoading) {
+          // 5. Watch "isFetchMorePhotos" to be "true"
+          //    and fetch 12 more photos
+          this.fetchMorePhotos(this.fullChunkParams);
         }
       }
     }
   },
+
+  computed: {
+    ...mapGetters("photos", ["photos", "photosIsLoading", "photosParams"])
+  },
+
   methods: {
-    // ...mapActions("photos", ["fetchPhotos"]),
+    ...mapActions("photos", ["fetchPhotos"]),
+    ...mapMutations("photos", ["SET_PARAMS"]),
 
-    fetchPhotos() {
-      const chunk = [
-        {
-          albumId: 1,
-          id: 1,
-          title: "accusamus beatae ad facilis cum similique qui sunt",
-          url: "https://via.placeholder.com/600/92c952",
-          thumbnailUrl: "https://via.placeholder.com/150/92c952"
-        },
-        {
-          albumId: 1,
-          id: 2,
-          title: "reprehenderit est deserunt velit ipsam",
-          url: "https://via.placeholder.com/600/771796",
-          thumbnailUrl: "https://via.placeholder.com/150/771796"
-        },
-        {
-          albumId: 1,
-          id: 3,
-          title: "officia porro iure quia iusto qui ipsa ut modi",
-          url: "https://via.placeholder.com/600/24f355",
-          thumbnailUrl: "https://via.placeholder.com/150/24f355"
-        },
-        {
-          albumId: 1,
-          id: 4,
-          title: "culpa odio esse rerum omnis laboriosam voluptate repudiandae",
-          url: "https://via.placeholder.com/600/d32776",
-          thumbnailUrl: "https://via.placeholder.com/150/d32776"
-        },
-        {
-          albumId: 1,
-          id: 5,
-          title: "natus nisi omnis corporis facere molestiae rerum in",
-          url: "https://via.placeholder.com/600/f66b97",
-          thumbnailUrl: "https://via.placeholder.com/150/f66b97"
-        },
-        {
-          albumId: 1,
-          id: 6,
-          title: "accusamus ea aliquid et amet sequi nemo",
-          url: "https://via.placeholder.com/600/56a8c2",
-          thumbnailUrl: "https://via.placeholder.com/150/56a8c2"
-        },
-        {
-          albumId: 1,
-          id: 7,
-          title:
-            "officia delectus consequatur vero aut veniam explicabo molestias",
-          url: "https://via.placeholder.com/600/b0f7cc",
-          thumbnailUrl: "https://via.placeholder.com/150/b0f7cc"
-        },
-        {
-          albumId: 1,
-          id: 8,
-          title: "aut porro officiis laborum odit ea laudantium corporis",
-          url: "https://via.placeholder.com/600/54176f",
-          thumbnailUrl: "https://via.placeholder.com/150/54176f"
-        },
-        {
-          albumId: 1,
-          id: 9,
-          title: "qui eius qui autem sed",
-          url: "https://via.placeholder.com/600/51aa97",
-          thumbnailUrl: "https://via.placeholder.com/150/51aa97"
-        },
-        {
-          albumId: 1,
-          id: 10,
-          title: "beatae et provident et ut vel",
-          url: "https://via.placeholder.com/600/810b14",
-          thumbnailUrl: "https://via.placeholder.com/150/810b14"
-        },
-        {
-          albumId: 1,
-          id: 11,
-          title: "nihil at amet non hic quia qui",
-          url: "https://via.placeholder.com/600/1ee8a4",
-          thumbnailUrl: "https://via.placeholder.com/150/1ee8a4"
-        },
-        {
-          albumId: 1,
-          id: 12,
-          title:
-            "mollitia soluta ut rerum eos aliquam consequatur perspiciatis maiores",
-          url: "https://via.placeholder.com/600/66b7d2",
-          thumbnailUrl: "https://via.placeholder.com/150/66b7d2"
-        }
-      ];
-      this.photos = concat(this.photos, chunk);
-
+    async fetchMorePhotos(params) {
+      this.SET_PARAMS(params);
+      await this.fetchPhotos(this.photosParams);
       this.checkLoaderInViewport();
     },
 
     checkLoaderInViewport() {
-      this.fetchMorePhotos = false;
+      // 3. Reset "isFetchMorePhotos" to false so the watcher could be triggered
+      this.isFetchMorePhotos = false;
+
+      // 4. Check if ref "loader" is in the viewport
+      //    and set "isFetchMorePhotos" to false if
+      //    NOT in the viewport / true if IN the viewport
+      //
+      //    Used nextTick to trigger the watcher in case
+      //    if "isFetchMorePhotos" was "true" and keeps
+      //    "true" after check
 
       this.$nextTick(() => {
-        this.fetchMorePhotos = isInViewport({
+        this.isFetchMorePhotos = isInViewport({
           element: this.$refs.loader,
           offsetTop: 200
         });
@@ -160,14 +94,6 @@ export default {
       // TODO: Remove photo
     }
   }
-  // computed: {
-  //   ...mapGetters("photos", [
-  //     "photos",
-  //     "photosIsLoading",
-  //     "photosMeta",
-  //     "photosParams"
-  //   ])
-  // }
 };
 </script>
 

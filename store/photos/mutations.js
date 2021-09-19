@@ -5,10 +5,14 @@ const SET_LOADING = (state, payload) => {
 };
 
 const SET_PARAMS = (state, payload) => {
-  const { start, limit } = payload;
+  const { _start = null, _limit = null } = payload;
 
-  state.meta["_start"] = start;
-  state.meta["_limit"] = limit;
+  if (_start !== null) state.params["_start"] = _start;
+  if (_limit !== null) state.params["_limit"] = _limit;
+};
+
+const UPDATE_START = (state, payload) => {
+  state.params["_start"] += payload;
 };
 
 const SET_PHOTOS = (state, payload) => {
@@ -28,5 +32,6 @@ export default {
   SET_LOADING,
   SET_PHOTOS,
   SET_PARAMS,
+  UPDATE_START,
   REMOVE_PHOTO
 };
