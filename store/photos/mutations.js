@@ -13,6 +13,7 @@ const SET_PARAMS = (state, payload) => {
 
 const UPDATE_START = (state, payload) => {
   state.params["_start"] += payload;
+  state.meta["photos_left"] -= payload;
 };
 
 const SET_PHOTOS = (state, payload) => {

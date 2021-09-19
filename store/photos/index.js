@@ -7,7 +7,7 @@ const state = () => {
     photos: [],
 
     meta: {
-      COUNT: 5000
+      photos_left: 5000
     },
 
     params: {
