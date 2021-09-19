@@ -7,7 +7,10 @@ export const actions = {
     commit("SET_LOADING", true);
 
     try {
-      // TODO: Fetch photos
+      const { data } = await this.$axios(ApiRoutes.photos.all, { params });
+
+      commit("SET_PHOTOS", data);
+      commit("UPDATE_START", params["_limit"]);
     } catch (e) {
       console.error(e);
     }

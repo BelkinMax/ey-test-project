@@ -12,3 +12,15 @@ export const setAttributes = (attrs, parent) => {
     });
   }
 };
+
+// Check if element is in the viewport
+export const isInViewport = params => {
+  const { element, offsetTop = 0 } = params;
+  const rect = element.getBoundingClientRect();
+
+  return (
+    rect.top <=
+    (window.innerHeight + offsetTop ||
+      document.documentElement.clientHeight + offsetTop)
+  );
+};
