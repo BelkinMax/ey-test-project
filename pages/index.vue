@@ -13,7 +13,7 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col ref="loadingSpinner" cols="12" justify="center">
+      <v-col ref="loadingSpinner" cols="12" class="text-center">
         <v-progress-circular
           indeterminate
           color="primary"
@@ -29,7 +29,7 @@ import { mapActions, mapGetters } from "vuex";
 export default {
   data() {
     return {
-      fetchMorePhotos: false,
+      fetchMorePhotos: false
     };
   },
   methods: {
@@ -37,15 +37,15 @@ export default {
 
     removeCard(id) {
       // TODO: Remove photo
-    },
+    }
   },
   computed: {
     ...mapGetters("photos", [
       "photos",
       "photosIsLoading",
       "photosMeta",
-      "photosParams",
-    ]),
-  },
+      "photosParams"
+    ])
+  }
 };
 </script>
