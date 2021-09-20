@@ -1,7 +1,7 @@
 <template>
-  <v-container fluid>
+  <section class="pa-5">
     <!-- Photos -->
-    <transition-group ref="itemsWrapper" class="row pa-3 items-row" name="list">
+    <transition-group ref="itemsWrapper" class="row" name="list" tag="div">
       <div
         v-for="photo in photos"
         :key="photo.id"
@@ -17,7 +17,7 @@
         <v-progress-linear indeterminate color="primary"></v-progress-linear>
       </v-col>
     </v-row>
-  </v-container>
+  </section>
 </template>
 
 <script>
