@@ -1,8 +1,25 @@
-# EY Test Project
+<h3 align="center">EY Test Project</h3>
 
-## URL
+<p align="center">
+    <a href="https://ey-test.netlify.app/">View Demo</a>
+</p>
 
-https://ey-test.netlify.app/
+<details open="open">
+  <summary>Summary</summary>
+  <ol>
+    <li>
+      <a href="#about">About the project</a>
+      <ul>
+        <li><a href="#goals">Goals</a></li>
+        <li><a href="#tools">Tools</a></li>
+        <li><a href="#description">Description</a></li>
+      </ul>
+    </li>
+    <li><a href="#build-setup">Build setup</a></li>
+    <li><a href="#steps">Steps</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ol>
+</details>
 
 ## Build Setup
 
@@ -20,5 +37,3 @@ $ npm run start
 # generate static project
 $ npm run generate
 ```
-
-For detailed explanation on how things work, check out [Nuxt.js docs](https://nuxtjs.org).
